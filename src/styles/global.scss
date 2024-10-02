@@ -1,0 +1,136 @@
+$primary: #5C6BC0;
+$black: #000000;
+$white: #ffffff;
+$textBlack: #1a1a1a;
+$textWhite: #fafafa;
+$textGrey: #616164;
+$grey: #ADADAD;
+$greyHover: #716e6e;
+$blueDark: #182246;
+$blueDarkMedium: #253366;
+$blueDarkLight: #314489;
+$blueLight: #F6F6F6;
+$blueLightMedium: #E5F4FF;
+$green: #5CC05F;
+$orange: #C0965C;
+$red: #C05C5E;
+
+
+@mixin elementShadow {
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+@mixin standardTransition($transitionType: all, $time:0.3s, $animation: linear) {
+  transition: $transitionType $time $animation;
+}
+
+
+* {
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: $primary;
+    border-radius: 999px;
+  }
+}
+
+body {
+  font-family: 'rubik', sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  color: $textWhite;
+  position: relative;
+  z-index: 0;
+  background-color: #0F1428;
+}
+
+.app {
+  min-height: calc(100vh - 80px);
+}
+
+h1 {
+  font-size: 2.25rem;
+  line-height: 3.375rem;
+  font-weight: 400;
+}
+
+h2 {
+  font-size: 2rem;
+  line-height: 3rem;
+  font-weight: 400;
+}
+
+h3 {
+  font-size: 1.75rem;
+  line-height: 2.625rem;
+  font-weight: 400;
+}
+
+h4 {
+  font-size: 1.5rem;
+  line-height: 2.255rem;
+  font-weight: 400;
+}
+
+h5 {
+  font-size: 1.25rem;
+  line-height: 1.875rem;
+  font-weight: 400;
+}
+
+p,
+h6 {
+  font-size: 1.125rem;
+  line-height: 1.688rem;
+  font-weight: 400;
+}
+
+svg {
+  fill: transparent;
+  stroke: $textBlack;
+  width: 20px;
+  height: 20px;
+  @include standardTransition;
+
+  &:hover {
+    @include standardTransition;
+
+  }
+}
+
+.container {
+  max-width: 1300px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+.overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  @include standardTransition;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 5;
+
+  &.active {
+    @include standardTransition;
+    opacity: 1;
+    pointer-events: initial;
+  }
+}

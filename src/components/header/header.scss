@@ -1,0 +1,10 @@
+header.header {
+  height: 80px;
+  @include elementShadow;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

@@ -1,5 +1,8 @@
 @import './font';
 @import './normalize';
 @import './global';
-@import './style';
 
+@import '../pages/home/home';
+@import '../pages/notFound/notFound';
+
+@import '../components/header/header';
