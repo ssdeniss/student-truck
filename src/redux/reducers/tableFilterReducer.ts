@@ -10,6 +10,15 @@ interface FilterState {
   orderBy: keyof Data;
 }
 
+const loadStateFromLocalStorage = (): Partial<FilterState> => {
+  const savedState = localStorage.getItem('tableState');
+  return savedState ? JSON.parse(savedState) : {};
+};
+
+const saveStateToLocalStorage = (state: FilterState) => {
+  localStorage.setItem('tableState', JSON.stringify(state));
+};
+
 const initialState: FilterState = {
   minDate: null,
   maxDate: null,
@@ -17,6 +26,7 @@ const initialState: FilterState = {
   idnp: '',
   order: 'asc',
   orderBy: 'name',
+  ...loadStateFromLocalStorage(),
 };
 
 const filterSlice = createSlice({
@@ -24,9 +34,14 @@ const filterSlice = createSlice({
   initialState,
   reducers: {
     setFilter: (state, action: PayloadAction<Partial<FilterState>>) => {
-      return { ...state, ...action.payload };
+      const newState = { ...state, ...action.payload };
+      saveStateToLocalStorage(newState);
+      return newState;
     },
-    resetFilters: () => initialState,
+    resetFilters: () => {
+      localStorage.removeItem('tableState');
+      return initialState;
+    },
   },
 });
 

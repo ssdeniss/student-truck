@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Popper, TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import Icon from '../Icon';
@@ -6,15 +6,17 @@ import Icon from '../Icon';
 interface TableSearchProps {
   setSearchQuery: (query: { type: string; value: string }) => void;
   searchType: string;
+  value: string;
 }
 
 const TableSearch: React.FC<TableSearchProps> = ({
   setSearchQuery,
   searchType,
+  value,
 }) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState(value); // Initialize with the passed value
   const [error, setError] = useState<string | null>(null);
 
   const handleSearchOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -61,6 +63,10 @@ const TableSearch: React.FC<TableSearchProps> = ({
       value: '',
     });
   };
+
+  useEffect(() => {
+    setSearchValue(value);
+  }, [value]);
 
   return (
     <>

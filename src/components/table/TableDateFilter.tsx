@@ -1,18 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DatePicker } from '@mui/x-date-pickers';
 import { Button, Popper, Typography } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import Icon from '../Icon';
 import { DateFilterProps } from './tableInterface';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { setFilter } from '../../redux/reducers/tableFilterReducer';
 
 const DateFilter: React.FC<DateFilterProps> = ({ onFilter }) => {
+  const dispatch = useDispatch();
+  const { minDate: minDateRedux, maxDate: maxDateRedux } = useSelector(
+    (state: RootState) => state.filterSlice,
+  );
+
   const [searchOpen, setSearchOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [minDate, setMinDate] = useState<Dayjs | null>(null);
   const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (minDateRedux) {
+      setMinDate(dayjs(minDateRedux));
+    }
+    if (maxDateRedux) {
+      setMaxDate(dayjs(maxDateRedux));
+    }
+  }, [minDateRedux, maxDateRedux]);
 
   const handleFilterOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -26,10 +43,11 @@ const DateFilter: React.FC<DateFilterProps> = ({ onFilter }) => {
     }
     setError(null);
 
-    onFilter(
-      minDate ? minDate.toISOString() : null,
-      maxDate ? maxDate.toISOString() : null,
-    );
+    const minDateISO = minDate ? minDate.toISOString() : null;
+    const maxDateISO = maxDate ? maxDate.toISOString() : null;
+
+    dispatch(setFilter({ minDate: minDateISO, maxDate: maxDateISO }));
+    onFilter(minDateISO, maxDateISO);
   };
 
   const clearFilter = () => {
@@ -37,7 +55,9 @@ const DateFilter: React.FC<DateFilterProps> = ({ onFilter }) => {
     setMaxDate(null);
     setError(null);
     onFilter(null, null);
+    dispatch(setFilter({ minDate: null, maxDate: null }));
   };
+
   return (
     <>
       <Button className="table__search-btn" onClick={handleFilterOpen}>

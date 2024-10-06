@@ -6,6 +6,8 @@ import TableSearch from './TableSearch';
 import TableHead from '@mui/material/TableHead';
 import { Column, Data, TableHeaderProps } from './tableInterface';
 import TableDateFilter from './TableDateFilter';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/reducers/rootReducer';
 
 const TableHeader: React.FC<TableHeaderProps> = ({
   columns,
@@ -15,6 +17,11 @@ const TableHeader: React.FC<TableHeaderProps> = ({
   handleSearchQuery,
   handleDateFilter,
 }) => {
+  const searchValues = {
+    name: useSelector((state: RootState) => state.filterSlice.name),
+    idnp: useSelector((state: RootState) => state.filterSlice.idnp),
+  };
+
   return (
     <TableHead>
       <TableRow>
@@ -39,12 +46,14 @@ const TableHeader: React.FC<TableHeaderProps> = ({
               <TableSearch
                 setSearchQuery={handleSearchQuery}
                 searchType="name"
+                value={searchValues.name}
               />
             )}
             {column.id === 'idnp' && (
               <TableSearch
                 setSearchQuery={handleSearchQuery}
                 searchType="idnp"
+                value={searchValues.idnp}
               />
             )}
             {column.id === 'birth' && (
