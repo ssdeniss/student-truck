@@ -86,7 +86,7 @@ const initialState: { students: Student[] } = {
 
 const validateStudent = (student: Student): boolean => {
   const { idnp, name, birth } = student;
-  const regex = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.\d{4}$/; // DD.MM.YYYY format
+  const regex = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.\d{4}$/;
   return (
     typeof idnp === 'number' &&
     idnp > 0 &&
@@ -118,7 +118,6 @@ const studentsSlice = createSlice({
     addStudent(state, action: PayloadAction<Student>) {
       const newStudent = action.payload;
 
-      // Validate the new student before adding
       if (validateStudent(newStudent)) {
         state.students.push(newStudent);
         localStorage.setItem('students', JSON.stringify(state.students));

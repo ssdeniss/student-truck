@@ -48,13 +48,10 @@ const TableModal = () => {
 
   const handleAdd = () => {
     let hasError = false;
-
-    // Reset error states
     setNameError(null);
     setBirthError(null);
     setIdnpError(null);
 
-    // Validation
     if (!name) {
       setNameError('Name is required.');
       hasError = true;

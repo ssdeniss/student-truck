@@ -16,7 +16,7 @@ const TableSearch: React.FC<TableSearchProps> = ({
 }) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [searchValue, setSearchValue] = useState(value); // Initialize with the passed value
+  const [searchValue, setSearchValue] = useState(value);
   const [error, setError] = useState<string | null>(null);
 
   const handleSearchOpen = (event: React.MouseEvent<HTMLButtonElement>) => {

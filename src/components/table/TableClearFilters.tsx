@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { resetFilters } from '../../redux/reducers/tableFilterReducer';
 
 interface TableClearFiltersProps {
-  students: any[]; // Adjust the type as needed
+  students: any[];
   setFilteredRows: React.Dispatch<React.SetStateAction<any[]>>;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   setRowsPerPage: React.Dispatch<React.SetStateAction<number>>;

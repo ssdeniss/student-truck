@@ -27,24 +27,24 @@ const TablePrint: React.FC<TablePrintProps> = ({ sortedRows, columns }) => {
             table {
               width: 100%;
               border-collapse: collapse;
-              table-layout: auto; /* Can change to fixed if needed */
+              table-layout: auto; 
             }
             th, td {
               border: 1px solid #ddd;
               padding: 12px;
               text-align: left;
-              height: 40px; /* Uniform row height */
+              height: 40px;
             }
             th {
               background-color: #f2f2f2;
               font-weight: bold;
             }
             .status-expelled {
-              background-color: #ffcccc; /* Light red for expelled */
+              background-color: #ffcccc; 
             }
             @media print {
               th, td {
-                background-color: white; /* Ensure backgrounds are printed */
+                background-color: white; 
               }
             }
           </style>
@@ -55,7 +55,7 @@ const TablePrint: React.FC<TablePrintProps> = ({ sortedRows, columns }) => {
             <thead>
               <tr>
                 ${columns
-                  .filter((column) => column.id !== 'actions') // Exclude actions column
+                  .filter((column) => column.id !== 'actions')
                   .map((column) => `<th>${column.label}</th>`)
                   .join('')}
               </tr>
@@ -66,7 +66,7 @@ const TablePrint: React.FC<TablePrintProps> = ({ sortedRows, columns }) => {
                   (row) => `
                   <tr class="${row.status === 'expelled' ? 'status-expelled' : ''}">
                     ${columns
-                      .filter((column) => column.id !== 'actions') // Exclude actions column
+                      .filter((column) => column.id !== 'actions')
                       .map((column) => `<td>${row[column.id]}</td>`)
                       .join('')}
                   </tr>
