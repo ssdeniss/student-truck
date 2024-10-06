@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface Student {
+export interface Student {
   idnp: number;
   name: string;
   birth: string;
@@ -84,6 +84,18 @@ const initialState: { students: Student[] } = {
   students: loadStudentsFromLocalStorage(),
 };
 
+const validateStudent = (student: Student): boolean => {
+  const { idnp, name, birth } = student;
+  const regex = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.\d{4}$/; // DD.MM.YYYY format
+  return (
+    typeof idnp === 'number' &&
+    idnp > 0 &&
+    typeof name === 'string' &&
+    name.trim() !== '' &&
+    regex.test(birth)
+  );
+};
+
 const studentsSlice = createSlice({
   name: 'students',
   initialState,
@@ -103,8 +115,20 @@ const studentsSlice = createSlice({
         localStorage.setItem('students', JSON.stringify(state.students));
       }
     },
+    addStudent(state, action: PayloadAction<Student>) {
+      const newStudent = action.payload;
+
+      // Validate the new student before adding
+      if (validateStudent(newStudent)) {
+        state.students.push(newStudent);
+        localStorage.setItem('students', JSON.stringify(state.students));
+      } else {
+        console.error('Validation failed for new student:', newStudent);
+      }
+    },
   },
 });
 
-export const { setStudents, updateStudentStatus } = studentsSlice.actions;
+export const { setStudents, updateStudentStatus, addStudent } =
+  studentsSlice.actions;
 export default studentsSlice.reducer;

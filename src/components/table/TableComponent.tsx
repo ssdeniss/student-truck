@@ -15,6 +15,9 @@ import { setFilter } from '../../redux/reducers/tableFilterReducer';
 import { RootState } from '../../redux/reducers/rootReducer';
 import { CircularProgress } from '@mui/material';
 import { updateStudentStatus } from '../../redux/reducers/studentsReducer';
+import TablePrint from './TablePrint';
+import TableModal from './TableModal';
+import TableClearFilters from './TableClearFilters';
 
 dayjs.extend(customParseFormat);
 
@@ -151,40 +154,53 @@ const TableComponent = () => {
   };
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <TableContainer sx={{ maxHeight: 800 }}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHeader
-              columns={columns}
-              orderBy={orderBy}
-              order={order}
-              handleRequestSort={handleRequestSort}
-              handleSearchQuery={handleSearchQuery}
-              handleDateFilter={handleDateFilter}
-            />
-            <TableContent
-              sortedRows={sortedRows}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              columns={columns}
-              handleToggleStatus={handleToggleStatus}
-            />
-          </Table>
-        </TableContainer>
-      )}
-      <TablePagination
-        rowsPerPageOptions={pagination}
-        component="div"
-        count={filteredRows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Paper>
+    <>
+      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+        <div className="table__top">
+          <TablePrint sortedRows={sortedRows} columns={[...columns]} />
+          <TableClearFilters
+            students={students}
+            setFilteredRows={setFilteredRows}
+            setPage={setPage}
+            setRowsPerPage={setRowsPerPage}
+            pagination={pagination}
+          />
+          <TableModal />
+        </div>
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <TableContainer sx={{ maxHeight: 800 }}>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHeader
+                columns={columns}
+                orderBy={orderBy}
+                order={order}
+                handleRequestSort={handleRequestSort}
+                handleSearchQuery={handleSearchQuery}
+                handleDateFilter={handleDateFilter}
+              />
+              <TableContent
+                sortedRows={sortedRows}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                columns={columns}
+                handleToggleStatus={handleToggleStatus}
+              />
+            </Table>
+          </TableContainer>
+        )}
+        <TablePagination
+          rowsPerPageOptions={pagination}
+          component="div"
+          count={filteredRows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
+    </>
   );
 };
 

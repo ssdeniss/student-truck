@@ -36,7 +36,15 @@ const TableContent: React.FC<TableContentProps> = ({
                       : row[column.id as keyof Data];
                   return column.id === 'actions' ? (
                     <TableCell key={column.id} align={column.align}>
-                      <Button onClick={() => handleToggleStatus(row.idnp)}>
+                      <Button
+                        variant="contained"
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                        }}
+                        color={row.status === 'enrolled' ? 'error' : 'success'}
+                        onClick={() => handleToggleStatus(row.idnp)}
+                      >
                         {row.status === 'enrolled' ? 'Expel' : 'Re-enroll'}
                       </Button>
                     </TableCell>
