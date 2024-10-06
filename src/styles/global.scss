@@ -49,7 +49,7 @@ body {
   color: $textWhite;
   position: relative;
   z-index: 0;
-  background-color: #0F1428;
+  background-color: $grey;
 }
 
 .app {
@@ -140,3 +140,4 @@ svg {
     padding: 50px 0;
   }
 }
+

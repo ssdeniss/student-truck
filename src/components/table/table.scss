@@ -1,3 +1,63 @@
-.table{
+.table {
+  &__search {
+    z-index: 9;
+    background-color: $textWhite;
+    border-radius: 20px;
+    padding: 20px;
+
+    .table__search-close {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      width: 30px;
+      min-width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        @include standardTransition;
+        stroke: $textBlack;
+      }
+
+      &:hover {
+        svg {
+          @include standardTransition;
+          opacity: 0.6;
+        }
+      }
+    }
+  }
+
+  &__search-content {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+  }
+
+  &__search-dates {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    gap: 20px;
+  }
+
+  &__search-input {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__search-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
 
 }
+

@@ -1,17 +1,17 @@
 import React, { ReactNode } from 'react';
-import useScrollToTop from '../hooks/useScrollToTop';
+import { SnackbarProvider } from 'notistack';
 
 interface DefaultProps {
   children: ReactNode;
 }
 
 const Default: React.FC<DefaultProps> = ({ children }) => {
-  useScrollToTop();
-
   return (
-    <div className="default">
-      <div className="default__content">{children}</div>
-    </div>
+    <SnackbarProvider maxSnack={5}>
+      <div className="default">
+        <div className="default__content">{children}</div>
+      </div>
+    </SnackbarProvider>
   );
 };
 

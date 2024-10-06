@@ -8,6 +8,14 @@ import dayjs from 'dayjs';
 import TableHeader from './TableHeader';
 import { Column, Data } from './tableInterface';
 import TableContent from './TableContent';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { useSnackbar } from 'notistack';
+import { useDispatch, useSelector } from 'react-redux';
+import { setFilter } from '../../redux/reducers/tableFilterReducer';
+import { RootState } from '../../redux/reducers/rootReducer';
+import { CircularProgress } from '@mui/material';
+
+dayjs.extend(customParseFormat);
 
 const columns: readonly Column[] = [
   {
@@ -80,6 +88,7 @@ const initialRows = [
 ];
 
 const pagination = [10, 25, 100];
+
 function createData(
   name: string,
   birth: string,
@@ -90,19 +99,30 @@ function createData(
 }
 
 const TableComponent = () => {
-  const [rows, setRows] = useState(initialRows);
+  const { enqueueSnackbar } = useSnackbar();
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
+  const [filteredRows, setFilteredRows] = useState(initialRows);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(pagination[0]);
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-  const [orderBy, setOrderBy] = useState<keyof Data>('name');
-  const [searchQueries, setSearchQueries] = useState({
-    name: '',
-    idnp: '',
-    minDate: null as string | null,
-    maxDate: null as string | null,
-  });
 
-  const [filteredRows, setFilteredRows] = useState(rows);
+  const { minDate, maxDate, name, idnp, order, orderBy } = useSelector(
+    (state: RootState) => state.filterSlice,
+  );
+
+  useEffect(() => {
+    const savedState = localStorage.getItem('tableState');
+    if (savedState) {
+      dispatch(setFilter(JSON.parse(savedState)));
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      'tableState',
+      JSON.stringify({ minDate, maxDate, name, idnp, order, orderBy }),
+    );
+  }, [minDate, maxDate, name, idnp, order, orderBy]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -117,61 +137,70 @@ const TableComponent = () => {
 
   const handleRequestSort = (property: keyof Data) => {
     const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
+    dispatch(setFilter({ order: isAsc ? 'desc' : 'asc', orderBy: property }));
   };
 
   const sortedRows = useMemo(() => {
     return [...filteredRows].sort((a, b) => {
       if (orderBy === 'idnp') {
-        return order === 'asc' ? a.idnp - b.idnp : b.idnp - a.idnp;
-      } else if (orderBy === 'birth') {
         return order === 'asc'
-          ? a.birth.localeCompare(b.birth)
-          : b.birth.localeCompare(a.birth);
-      } else {
+          ? Number(a.idnp) - Number(b.idnp)
+          : Number(b.idnp) - Number(a.idnp);
+      } else if (orderBy === 'birth') {
+        const dateA = dayjs(a.birth, 'DD.MM.YYYY');
+        const dateB = dayjs(b.birth, 'DD.MM.YYYY');
+        return order === 'asc' ? dateA.diff(dateB) : dateB.diff(dateA);
+      } else if (orderBy === 'name') {
         return order === 'asc'
           ? a[orderBy].localeCompare(b[orderBy])
           : b[orderBy].localeCompare(a[orderBy]);
       }
+      return 0;
     });
   }, [filteredRows, order, orderBy]);
 
   useEffect(() => {
-    const filtered = filterRows(
-      searchQueries.minDate,
-      searchQueries.maxDate,
-      searchQueries,
-    );
-    setFilteredRows(filtered);
-  }, [searchQueries, rows]);
+    const fetchFilteredRows = async () => {
+      setLoading(true);
+      const filtered = filterRows(minDate, maxDate, { name, idnp });
+      setFilteredRows(filtered);
+
+      setLoading(false);
+    };
+
+    fetchFilteredRows();
+  }, [minDate, maxDate, name, idnp]);
 
   const handleSearchQuery = (query: { type: string; value: string }) => {
-    setSearchQueries((prev) => ({
-      ...prev,
-      [query.type]: query.value,
-    }));
+    dispatch(setFilter({ [query.type]: query.value }));
   };
 
   const handleToggleStatus = (idnp: number) => {
-    setRows((prevRows) =>
-      prevRows.map((row) =>
-        row.idnp === idnp
-          ? {
-              ...row,
-              status: row.status === 'enrolled' ? 'expelled' : 'enrolled',
-            }
-          : row,
-      ),
+    setFilteredRows((prevRows) =>
+      prevRows.map((row) => {
+        if (row.idnp === idnp) {
+          const newStatus = row.status === 'enrolled' ? 'expelled' : 'enrolled';
+          const actionMessage =
+            newStatus === 'enrolled'
+              ? `${row.name} has been enrolled.`
+              : `${row.name} has been expelled.`;
+
+          enqueueSnackbar(actionMessage, {
+            variant: newStatus === 'enrolled' ? 'success' : 'error',
+          });
+
+          return {
+            ...row,
+            status: newStatus,
+          };
+        }
+        return row;
+      }),
     );
   };
 
   const handleDateFilter = (minDate: string | null, maxDate: string | null) => {
-    setSearchQueries((prev) => ({
-      ...prev,
-      minDate,
-      maxDate,
-    }));
+    dispatch(setFilter({ minDate, maxDate }));
   };
 
   const filterRows = (
@@ -180,9 +209,13 @@ const TableComponent = () => {
     searchQueries: { name: string; idnp: string },
   ) => {
     return initialRows.filter((row) => {
-      const birthDate = dayjs(row.birth);
-      const isAfterMin = minDate ? birthDate.isAfter(dayjs(minDate)) : true;
-      const isBeforeMax = maxDate ? birthDate.isBefore(dayjs(maxDate)) : true;
+      const birthDate = dayjs(row.birth, 'DD.MM.YYYY');
+      const isAfterMin = minDate
+        ? birthDate.isAfter(dayjs(minDate, 'DD.MM.YYYY'))
+        : true;
+      const isBeforeMax = maxDate
+        ? birthDate.isBefore(dayjs(maxDate, 'DD.MM.YYYY'))
+        : true;
 
       const matchesName = searchQueries.name
         ? row.name.toLowerCase().includes(searchQueries.name.toLowerCase())
@@ -197,29 +230,33 @@ const TableComponent = () => {
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer sx={{ maxHeight: 800 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHeader
-            columns={columns}
-            orderBy={orderBy}
-            order={order}
-            handleRequestSort={handleRequestSort}
-            handleSearchQuery={handleSearchQuery}
-            handleDateFilter={handleDateFilter}
-          />
-          <TableContent
-            sortedRows={sortedRows}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            columns={columns}
-            handleToggleStatus={handleToggleStatus}
-          />
-        </Table>
-      </TableContainer>
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <TableContainer sx={{ maxHeight: 800 }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHeader
+              columns={columns}
+              orderBy={orderBy}
+              order={order}
+              handleRequestSort={handleRequestSort}
+              handleSearchQuery={handleSearchQuery}
+              handleDateFilter={handleDateFilter}
+            />
+            <TableContent
+              sortedRows={sortedRows}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              columns={columns}
+              handleToggleStatus={handleToggleStatus}
+            />
+          </Table>
+        </TableContainer>
+      )}
       <TablePagination
         rowsPerPageOptions={pagination}
         component="div"
-        count={rows.length}
+        count={filteredRows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
