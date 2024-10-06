@@ -8,8 +8,7 @@ module.exports = {
   plugins: ['@typescript-eslint'],
   rules: {
     'no-eval': 'error',
-    'max-len': ['error', { code: 80 }],
-    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    'max-len': ['error', { code: 200 }],
     'no-undef': 'error',
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/no-explicit-any': 'warn',

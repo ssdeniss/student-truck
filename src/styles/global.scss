@@ -134,3 +134,9 @@ svg {
     pointer-events: initial;
   }
 }
+
+.default {
+  &__content {
+    padding: 50px 0;
+  }
+}
