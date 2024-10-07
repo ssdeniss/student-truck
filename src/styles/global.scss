@@ -1,19 +1,7 @@
-$primary: #5C6BC0;
-$black: #000000;
-$white: #ffffff;
 $textBlack: #1a1a1a;
 $textWhite: #fafafa;
 $textGrey: #616164;
 $grey: #ADADAD;
-$greyHover: #716e6e;
-$blueDark: #182246;
-$blueDarkMedium: #253366;
-$blueDarkLight: #314489;
-$blueLight: #F6F6F6;
-$blueLightMedium: #E5F4FF;
-$green: #5CC05F;
-$orange: #C0965C;
-$red: #C05C5E;
 
 
 @mixin elementShadow {
@@ -35,7 +23,7 @@ $red: #C05C5E;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: $primary;
+    background: $textGrey;
     border-radius: 999px;
   }
 }

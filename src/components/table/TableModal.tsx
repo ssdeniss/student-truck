@@ -21,7 +21,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 
 interface TableModalProps {
-  student?: StudentType | null; // Make student prop optional
+  student?: StudentType | null;
 }
 
 const TableModal: React.FC<TableModalProps> = ({ student = null }) => {
@@ -103,9 +103,9 @@ const TableModal: React.FC<TableModalProps> = ({ student = null }) => {
     };
 
     if (student) {
-      dispatch(updateStudent(studentData)); // Dispatch update if student exists
+      dispatch(updateStudent(studentData));
     } else {
-      dispatch(addStudent(studentData)); // Dispatch add if no student is passed
+      dispatch(addStudent(studentData));
     }
 
     resetForm();
