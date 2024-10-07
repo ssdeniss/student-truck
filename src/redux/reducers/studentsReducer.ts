@@ -125,9 +125,31 @@ const studentsSlice = createSlice({
         console.error('Validation failed for new student:', newStudent);
       }
     },
+    updateStudent(state, action: PayloadAction<Student>) {
+      const updatedStudent = action.payload;
+      const index = state.students.findIndex(
+        (s) => s.idnp === updatedStudent.idnp,
+      );
+      if (index !== -1) {
+        state.students[index] = updatedStudent;
+        localStorage.setItem('students', JSON.stringify(state.students));
+      }
+    },
+    deleteStudent(state, action: PayloadAction<number>) {
+      const idnpToDelete = action.payload;
+      state.students = state.students.filter(
+        (student) => student.idnp !== idnpToDelete,
+      );
+      localStorage.setItem('students', JSON.stringify(state.students));
+    },
   },
 });
 
-export const { setStudents, updateStudentStatus, addStudent } =
-  studentsSlice.actions;
+export const {
+  setStudents,
+  updateStudentStatus,
+  addStudent,
+  updateStudent,
+  deleteStudent,
+} = studentsSlice.actions;
 export default studentsSlice.reducer;

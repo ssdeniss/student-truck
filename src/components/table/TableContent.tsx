@@ -5,6 +5,9 @@ import { Data, TableContentProps } from './tableInterface';
 import TableCell from '@mui/material/TableCell';
 import Button from '@mui/material/Button';
 import TableEmpty from './TableEmpty';
+import { useDispatch } from 'react-redux';
+import { deleteStudent, Student } from '../../redux/reducers/studentsReducer';
+import TableModal from './TableModal';
 
 const TableContent: React.FC<TableContentProps> = ({
   sortedRows,
@@ -13,6 +16,12 @@ const TableContent: React.FC<TableContentProps> = ({
   columns,
   handleToggleStatus,
 }) => {
+  const dispatch = useDispatch();
+
+  const handleDelete = (idno: number) => {
+    dispatch(deleteStudent(idno));
+  };
+
   return (
     <>
       {sortedRows.length ? (
@@ -36,17 +45,31 @@ const TableContent: React.FC<TableContentProps> = ({
                       : row[column.id as keyof Data];
                   return column.id === 'actions' ? (
                     <TableCell key={column.id} align={column.align}>
-                      <Button
-                        variant="contained"
-                        style={{
-                          display: 'block',
-                          width: '100%',
-                        }}
-                        color={row.status === 'enrolled' ? 'error' : 'success'}
-                        onClick={() => handleToggleStatus(row.idnp)}
-                      >
-                        {row.status === 'enrolled' ? 'Expel' : 'Re-enroll'}
-                      </Button>
+                      <div className="table__action">
+                        <Button
+                          variant="contained"
+                          style={{
+                            display: 'block',
+                            width: '100%',
+                          }}
+                          color={row.status === 'enrolled' ? 'info' : 'success'}
+                          onClick={() => handleToggleStatus(row.idnp)}
+                        >
+                          {row.status === 'enrolled' ? 'Expel' : 'Re-enroll'}
+                        </Button>
+                        <TableModal student={row as Student} />
+                        <Button
+                          variant="contained"
+                          color="error"
+                          style={{
+                            display: 'block',
+                            width: '100%',
+                          }}
+                          onClick={() => handleDelete(row.idnp)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
                     </TableCell>
                   ) : (
                     <TableCell key={column.id} align={column.align}>

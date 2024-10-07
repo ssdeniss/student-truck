@@ -59,6 +59,7 @@
     gap: 10px;
     margin-top: 20px;
     width: 100%;
+
     button {
       width: 100%;
     }
@@ -80,6 +81,11 @@
     padding: 10px;
   }
 
+  &__action {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 }
 
 
