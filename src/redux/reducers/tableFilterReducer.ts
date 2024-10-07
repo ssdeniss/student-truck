@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Data } from '../../components/table/tableInterface';
 
-interface FilterState {
+export interface FilterState {
   minDate: string | null;
   maxDate: string | null;
   name: string;

@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import Default from './layouts/Default';
 import { Route, Routes } from 'react-router-dom';
-import Home from './pages/home/Home';
+import { CircularProgress } from '@mui/material';
 
-const App = () => {
+const Home = lazy(() => import('./pages/home/Home'));
+
+const App: React.FC = () => {
   return (
     <div className="app">
       <Default>
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
+        <Suspense fallback={<CircularProgress />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </Suspense>
       </Default>
     </div>
   );

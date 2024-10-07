@@ -3,9 +3,9 @@
     "target": "es6",
 
     "lib": [
-      "dom",
+      "DOM",
       "dom.iterable",
-      "esnext"
+      "ESNext"
     ],
     "module": "commonjs",
     "jsx": "react",

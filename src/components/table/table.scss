@@ -4,6 +4,7 @@
     background-color: $textWhite;
     border-radius: 20px;
     padding: 20px;
+    @include elementShadow;
 
     .table__search-close {
       position: absolute;
